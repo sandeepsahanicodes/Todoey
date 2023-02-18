@@ -19,7 +19,7 @@ class TodoListViewController: UITableViewController {
 
 }
 
-// MARK: Table view datasource methods
+// MARK: Table view datasource methods.
 extension TodoListViewController
 {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -32,5 +32,24 @@ extension TodoListViewController
         cell.textLabel?.text = tasksArray[indexPath.row]
         return cell
        }
+}
+
+// MARK: Table View Delegte methods.
+extension TodoListViewController
+{
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        // Adds check mark image in cell when its selected and remove it when selected second time.
+        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark
+        {
+            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        }
+        else
+        {
+            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        }
+        // Deselecting selected row with an animation.
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 
