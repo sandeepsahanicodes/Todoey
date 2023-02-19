@@ -10,13 +10,51 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    let tasksArray = ["Ask for ear piece","Visit dentist","Buy Handwash "]
+    var tasksArray = ["Ask for ear piece","Visit dentist","Buy Handwash "]
+    let defaults = UserDefaults.standard
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        guard let items = defaults.array(forKey: "TodoListArray") as? [String] else
+        {
+            print("Error while unwrapping optional value!!")
+            return
+        }
+        tasksArray = items
         // Do any additional setup after loading the view.
     }
-
+    
+    // MARK: Add new item.
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem)
+    {
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add Item", style: .default) { action in
+            // What will happen once user will click add item on our UIAlert.
+            // print("Sucess! ")
+            guard let safeText = textField.text else
+            {
+                print("Error while unwrapping optional")
+                return
+            }
+            self.tasksArray.append(safeText)
+            self.defaults.set(self.tasksArray, forKey: "TodoListArray")
+            self.tableView.reloadData()
+            // print(textField.text)
+            
+        }
+        alert.addTextField { alertTextField in
+            
+            alertTextField.placeholder = "Create New Item"
+            textField = alertTextField
+        }
+        alert.addAction(action)
+        
+        present(alert, animated: true)
+    }
+    
 }
 
 // MARK: Table view datasource methods.
