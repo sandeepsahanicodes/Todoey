@@ -8,19 +8,22 @@
 
 import UIKit
 
+
+@available(iOS 16.0, *)
 class TodoListViewController: UITableViewController {
 
-    var tasksArray = ["Ask for ear piece","Visit dentist","Buy Handwash "]
+    var tasksArray = [Item]()
+    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(component: "Items.plist")
+   
     let defaults = UserDefaults.standard
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        guard let items = defaults.array(forKey: "TodoListArray") as? [String] else
-        {
-            print("Error while unwrapping optional value!!")
-            return
-        }
-        tasksArray = items
+    
+        // print(dataFilePath)
+        loadItems()
+    
         // Do any additional setup after loading the view.
     }
     
@@ -39,11 +42,11 @@ class TodoListViewController: UITableViewController {
                 print("Error while unwrapping optional")
                 return
             }
-            self.tasksArray.append(safeText)
-            self.defaults.set(self.tasksArray, forKey: "TodoListArray")
-            self.tableView.reloadData()
-            // print(textField.text)
+            let newItem = Item()
+            newItem.title = safeText
+            self.tasksArray.append(newItem)
             
+            self.saveItem()
         }
         alert.addTextField { alertTextField in
             
@@ -55,9 +58,42 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true)
     }
     
+    // MARK: Model Manipulation methods
+    func saveItem()
+    {
+        let encoder = PropertyListEncoder()
+         
+         do{
+             
+             let data = try encoder.encode(tasksArray)
+             try data.write(to: dataFilePath!)
+         }
+         catch
+         {
+           print("Error encoding task array \(error)")
+         }
+          tableView.reloadData()
+    }
+    // MARK: loads item into tasks array.
+    func loadItems()
+    {
+        do {
+            
+            let data = try Data(contentsOf: dataFilePath!)
+            let decoder = PropertyListDecoder()
+            tasksArray = try decoder.decode([Item].self, from: data)
+        }
+        catch
+        {
+            print("Error while decoding data \(error)")
+        }
+        
+    }
+    
 }
 
 // MARK: Table view datasource methods.
+@available(iOS 16.0, *)
 extension TodoListViewController
 {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -67,25 +103,48 @@ extension TodoListViewController
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "todoItemCell", for: indexPath)
-        cell.textLabel?.text = tasksArray[indexPath.row]
+        let item = tasksArray[indexPath.row]
+        
+        cell.textLabel?.text = item.title
+        
+//        if item.done == true
+//        {
+//            cell.accessoryType = .checkmark
+//        }
+//        else
+//        {
+//            cell.accessoryType = .none
+//        }
+        
+        // Terniary expression of above statement
+        cell.accessoryType = item.done ? .checkmark : .none
+        
         return cell
-       }
+        
+        
+    }
 }
 
 // MARK: Table View Delegte methods.
+@available(iOS 16.0, *)
 extension TodoListViewController
 {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         // Adds check mark image in cell when its selected and remove it when selected second time.
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark
-        {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }
-        else
-        {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+//        if tasksArray[indexPath.row].done == false
+//        {
+//            tasksArray[indexPath.row].done = true
+//        }
+//        else
+//        {
+//            tasksArray[indexPath.row].done = false
+//        }
+        
+        tasksArray[indexPath.row].done = !tasksArray[indexPath.row].done
+        self.saveItem()
+        
+        tableView.reloadData()
         // Deselecting selected row with an animation.
         tableView.deselectRow(at: indexPath, animated: true)
     }
