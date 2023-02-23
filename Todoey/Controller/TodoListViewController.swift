@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 
 @available(iOS 16.0, *)
@@ -14,14 +15,15 @@ class TodoListViewController: UITableViewController {
 
     var tasksArray = [Item]()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(component: "Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
    
-    let defaults = UserDefaults.standard
     override func viewDidLoad()
     {
         super.viewDidLoad()
-    
-        // print(dataFilePath)
+//        // URL where sqlite file is been saved.
+//        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+//        print(dataFilePath)
+        
         loadItems()
     
         // Do any additional setup after loading the view.
@@ -42,8 +44,10 @@ class TodoListViewController: UITableViewController {
                 print("Error while unwrapping optional")
                 return
             }
-            let newItem = Item()
+            
+            let newItem = Item(context: self.context)
             newItem.title = safeText
+            newItem.done = false
             self.tasksArray.append(newItem)
             
             self.saveItem()
@@ -61,33 +65,33 @@ class TodoListViewController: UITableViewController {
     // MARK: Model Manipulation methods
     func saveItem()
     {
-        let encoder = PropertyListEncoder()
-         
-         do{
-             
-             let data = try encoder.encode(tasksArray)
-             try data.write(to: dataFilePath!)
+    
+         do
+         {
+             try self.context.save()
          }
          catch
          {
-           print("Error encoding task array \(error)")
+           print("Error Saving context \(error)")
          }
           tableView.reloadData()
     }
+    
     // MARK: loads item into tasks array.
     func loadItems()
     {
-        do {
-            
-            let data = try Data(contentsOf: dataFilePath!)
-            let decoder = PropertyListDecoder()
-            tasksArray = try decoder.decode([Item].self, from: data)
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        
+         do
+        {
+            // Fetch data from persistent container.
+            tasksArray = try context.fetch(request)
         }
         catch
         {
-            print("Error while decoding data \(error)")
+            print("Error while fetching data from context \(error)")
         }
-        
+       
     }
     
 }
@@ -107,7 +111,7 @@ extension TodoListViewController
         
         cell.textLabel?.text = item.title
         
-//        if item.done == true
+//         if item.done == true
 //        {
 //            cell.accessoryType = .checkmark
 //        }
@@ -141,7 +145,12 @@ extension TodoListViewController
 //            tasksArray[indexPath.row].done = false
 //        }
         
-        tasksArray[indexPath.row].done = !tasksArray[indexPath.row].done
+        // Delete and upadate the selected row on table view.
+        context.delete(tasksArray[indexPath.row])
+        tasksArray.remove(at: indexPath.row)
+        
+        // tasksArray[indexPath.row].done = !tasksArray[indexPath.row].done
+    
         self.saveItem()
         
         tableView.reloadData()
