@@ -11,7 +11,8 @@ import CoreData
 
 
 @available(iOS 16.0, *)
-class TodoListViewController: UITableViewController {
+class TodoListViewController: UITableViewController
+{
 
     var tasksArray = [Item]()
     
@@ -23,7 +24,7 @@ class TodoListViewController: UITableViewController {
 //        // URL where sqlite file is been saved.
 //        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 //        print(dataFilePath)
-        
+
         loadItems()
     
         // Do any additional setup after loading the view.
@@ -156,6 +157,20 @@ extension TodoListViewController
         tableView.reloadData()
         // Deselecting selected row with an animation.
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+// MARK: Extension for UISearchBar.
+@available(iOS 16.0, *)
+extension TodoListViewController: UISearchBarDelegate
+{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar)
+    {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        // print(searchBar.text!)
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@ ", searchBar.text!)
+        request.predicate = predicate
+        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
     }
 }
 
