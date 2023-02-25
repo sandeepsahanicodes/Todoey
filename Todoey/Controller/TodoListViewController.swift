@@ -21,11 +21,9 @@ class TodoListViewController: UITableViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-//        // URL where sqlite file is been saved.
-//        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-//        print(dataFilePath)
-
-        loadItems()
+        // URL where sqlite file is been saved.
+        // let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+       loadItems()
     
         // Do any additional setup after loading the view.
     }
@@ -66,7 +64,6 @@ class TodoListViewController: UITableViewController
     // MARK: Model Manipulation methods
     func saveItem()
     {
-    
          do
          {
              try self.context.save()
@@ -78,12 +75,10 @@ class TodoListViewController: UITableViewController
           tableView.reloadData()
     }
     
-    // MARK: loads item into tasks array.
-    func loadItems()
+    // MARK: loads item into tasks array with request.
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest())
     {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        
-         do
+        do
         {
             // Fetch data from persistent container.
             tasksArray = try context.fetch(request)
@@ -92,7 +87,6 @@ class TodoListViewController: UITableViewController
         {
             print("Error while fetching data from context \(error)")
         }
-       
     }
     
 }
@@ -167,10 +161,11 @@ extension TodoListViewController: UISearchBarDelegate
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar)
     {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
-        // print(searchBar.text!)
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@ ", searchBar.text!)
-        request.predicate = predicate
-        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@ ", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadItems(with: request)
+        tableView.reloadData()
     }
 }
 
