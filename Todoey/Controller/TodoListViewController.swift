@@ -40,7 +40,7 @@ class TodoListViewController: UITableViewController
             // print("Sucess! ")
             guard let safeText = textField.text else
             {
-                print("Error while unwrapping optional")
+                print("Error while unwrapping optional value of text field")
                 return
             }
             
@@ -87,6 +87,7 @@ class TodoListViewController: UITableViewController
         {
             print("Error while fetching data from context \(error)")
         }
+        tableView.reloadData()
     }
     
 }
@@ -158,6 +159,7 @@ extension TodoListViewController
 @available(iOS 16.0, *)
 extension TodoListViewController: UISearchBarDelegate
 {
+    // Quering searched element in search bar.
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar)
     {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
@@ -165,7 +167,21 @@ extension TodoListViewController: UISearchBarDelegate
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         loadItems(with: request)
-        tableView.reloadData()
     }
+    
+    // Getting original list back after searching element.
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
+    {
+        if searchBar.text?.count == 0
+        {
+            loadItems()
+            DispatchQueue.main.async
+            {
+                searchBar.resignFirstResponder() 
+            }
+            
+        }
+    }
+    
 }
 
