@@ -9,28 +9,27 @@
 import UIKit
 import CoreData
 
-
-@available(iOS 16.0, *)
-class TodoListViewController: UITableViewController
-{
+class TodoListViewController: UITableViewController {
 
     var tasksArray = [Item]()
     
+    var selectedCategory: Category? {
+        didSet {
+            loadItems()
+        }
+    }
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
    
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         // URL where sqlite file is been saved.
         // let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-       loadItems()
     
         // Do any additional setup after loading the view.
     }
     
     // MARK: Add new item.
-    @IBAction func addButtonPressed(_ sender: UIBarButtonItem)
-    {
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
@@ -47,6 +46,7 @@ class TodoListViewController: UITableViewController
             let newItem = Item(context: self.context)
             newItem.title = safeText
             newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             self.tasksArray.append(newItem)
             
             self.saveItem()
@@ -62,29 +62,34 @@ class TodoListViewController: UITableViewController
     }
     
     // MARK: Model Manipulation methods
-    func saveItem()
-    {
-         do
-         {
+    func saveItem() {
+         do {
              try self.context.save()
          }
-         catch
-         {
+         catch {
            print("Error Saving context \(error)")
          }
           tableView.reloadData()
     }
     
     // MARK: loads item into tasks array with request.
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest())
-    {
-        do
-        {
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
+        
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        
+        if let additionalPredicate = predicate {
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+            request.predicate = compoundPredicate
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
+        
+        do {
             // Fetch data from persistent container.
             tasksArray = try context.fetch(request)
         }
-        catch
-        {
+        catch {
             print("Error while fetching data from context \(error)")
         }
         tableView.reloadData()
@@ -93,11 +98,9 @@ class TodoListViewController: UITableViewController
 }
 
 // MARK: Table view datasource methods.
-@available(iOS 16.0, *)
-extension TodoListViewController
-{
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+
+extension TodoListViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasksArray.count
     }
     
@@ -126,60 +129,46 @@ extension TodoListViewController
 }
 
 // MARK: Table View Delegte methods.
-@available(iOS 16.0, *)
-extension TodoListViewController
-{
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
-    {
-        // Adds check mark image in cell when its selected and remove it when selected second time.
-//        if tasksArray[indexPath.row].done == false
-//        {
-//            tasksArray[indexPath.row].done = true
-//        }
-//        else
-//        {
-//            tasksArray[indexPath.row].done = false
-//        }
-        
+
+extension TodoListViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+ 
         // Delete and upadate the selected row on table view.
-        context.delete(tasksArray[indexPath.row])
-        tasksArray.remove(at: indexPath.row)
+        // context.delete(tasksArray[indexPath.row])
+        // tasksArray.remove(at: indexPath.row)
         
         // tasksArray[indexPath.row].done = !tasksArray[indexPath.row].done
     
         self.saveItem()
         
         tableView.reloadData()
+        
         // Deselecting selected row with an animation.
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
 // MARK: Extension for UISearchBar.
-@available(iOS 16.0, *)
-extension TodoListViewController: UISearchBarDelegate
-{
+
+extension TodoListViewController: UISearchBarDelegate {
     // Quering searched element in search bar.
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar)
-    {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         request.predicate = NSPredicate(format: "title CONTAINS[cd] %@ ", searchBar.text!)
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        loadItems(with: request)
+        loadItems(with: request )
     }
     
     // Getting original list back after searching element.
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
-    {
-        if searchBar.text?.count == 0
-        {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+         // Compilation time problem!
+        if searchBar.text?.count == 0 {
             loadItems()
-            DispatchQueue.main.async
-            {
-                searchBar.resignFirstResponder() 
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
             }
-            
         }
     }
     

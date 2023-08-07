@@ -52,7 +52,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dgi-oy-7Uc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2717" y="35"/>
+            <point key="canvasLocation" x="2524" y="22"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="59D-89-VaQ">
@@ -110,12 +110,12 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="OWr-g7-gV3" kind="show" id="OT3-2f-oC8"/>
+                        <segue destination="OWr-g7-gV3" kind="show" identifier="goToItem" id="OT3-2f-oC8"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ugs-5l-fsG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1802" y="35"/>
+            <point key="canvasLocation" x="1706" y="22"/>
         </scene>
     </scenes>
     <color key="tintColor" systemColor="linkColor"/>
