@@ -13,6 +13,7 @@ class TodoListViewController: UITableViewController {
 
     var todoItems: Results<Item>?
     let realm = try! Realm()
+    
     var selectedCategory: Category? {
         didSet {
             loadItems()
@@ -35,20 +36,25 @@ class TodoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { action in
             // What will happen once user will click add item on our UIAlert.
-            // print("Sucess! ")
-            guard let safeText = textField.text else
-            {
+            // print("Success! ")
+            guard let unwrappedTitle = textField.text else {
                 print("Error while unwrapping optional value of text field")
                 return
             }
             
-            // let newItem = Item(context: self.context)
-//            newItem.title = safeText
-//            newItem.done = false
-//            newItem.parentCategory = self.selectedCategory
-//            self.tasksArray.append(newItem)
-//
-            // self.saveItem()
+            if let currentCategory = self.selectedCategory {
+                
+                do {
+                    try self.realm.write {
+                        let newItem = Item()
+                        newItem.title = unwrappedTitle
+                        currentCategory.items.append(newItem)
+                    }
+                } catch {
+                    print("Error saving items, \(error.localizedDescription)")
+                }
+            }
+            self.tableView.reloadData()
         }
         alert.addTextField { alertTextField in
             
@@ -83,34 +89,24 @@ extension TodoListViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "todoItemCell", for: indexPath)
-        let item = todoItems?[indexPath.row]
-
-        cell.textLabel?.text = item?.title ?? "Item Not Added Yet"
-
-//         if item.done == true
-//        {
-//            cell.accessoryType = .checkmark
-//        }
-//        else
-//        {
-//            cell.accessoryType = .none
-//        }
-
-        // Terniary expression of above statement
-        // cell.accessoryType = item.done ? .checkmark : .none
-
+        
+        if let item = todoItems?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.isDone ? .checkmark : .none
+        } else {
+            cell.textLabel?.text = "No Item Added"
+        }
+    
         return cell
-
-
     }
 }
 
-// MARK: Table View Delegte methods.
+// MARK: Table View Delegate methods.
 
 extension TodoListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        // Delete and upadate the selected row on table view.
+        // Delete and update the selected row on table view.
         // context.delete(tasksArray[indexPath.row])
         // tasksArray.remove(at: indexPath.row)
 
