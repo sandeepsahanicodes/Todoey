@@ -106,11 +106,16 @@ extension TodoListViewController {
 extension TodoListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        // Delete and update the selected row on table view.
-        // context.delete(tasksArray[indexPath.row])
-        // tasksArray.remove(at: indexPath.row)
-
-        // tasksArray[indexPath.row].done = !tasksArray[indexPath.row].done
+        if let item = todoItems?[indexPath.row] {
+            
+            do {
+                try realm.write({
+                    item.isDone = !item.isDone
+                })
+            } catch {
+                print("Error while updating doe status, \(error.localizedDescription)")
+            }
+        }
 
         tableView.reloadData()
 
