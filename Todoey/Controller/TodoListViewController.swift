@@ -8,12 +8,14 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
 
     var todoItems: Results<Item>?
     let realm = try! Realm()
     
+    @IBOutlet weak var searchBar: UISearchBar!
     var selectedCategory: Category? {
         didSet {
             loadItems()
@@ -22,10 +24,23 @@ class TodoListViewController: SwipeTableViewController {
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // URL where sqlite file is been saved.
-        // let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+    }
     
-        // Do any additional setup after loading the view.
+    override func viewWillAppear(_ animated: Bool) {
+        title = selectedCategory!.name
+        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller doesn't exist")}
+        
+        if let colorHex = selectedCategory?.cellColor {
+            
+            if let navBarColor = UIColor(hexString: colorHex) {
+                navBar.barTintColor = UIColor(hexString: colorHex)
+                navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+                searchBar.barTintColor = navBarColor
+                
+                navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+            }
+            
+        }
     }
     
     // MARK: Add new item.
@@ -109,6 +124,12 @@ extension TodoListViewController {
         if let item = todoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.isDone ? .checkmark : .none
+           
+            
+            if let color = UIColor(hexString: selectedCategory!.cellColor)?.darken(byPercentage:CGFloat(indexPath.row) / CGFloat(todoItems!.count)) {
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
         } else {
             cell.textLabel?.text = "No Item Added"
         }

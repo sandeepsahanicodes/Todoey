@@ -39,7 +39,7 @@
                             <outlet property="delegate" destination="OWr-g7-gV3" id="XWC-82-BLu"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Items" id="EPS-5g-IUM">
+                    <navigationItem key="navigationItem" title="Items" largeTitleDisplayMode="always" id="EPS-5g-IUM">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="BPZ-2c-igH">
                             <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
@@ -49,6 +49,9 @@
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" barStyle="black" translucent="NO"/>
+                    <connections>
+                        <outlet property="searchBar" destination="zbp-Zr-laP" id="Maf-7O-BIs"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dgi-oy-7Uc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -59,13 +62,16 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="87Z-kW-uBz" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="KbF-HT-Opg">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" largeTitles="YES" id="KbF-HT-Opg">
+                        <rect key="frame" x="0.0" y="59" width="393" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" systemColor="linkColor"/>
+                        <color key="backgroundColor" red="0.1058823529" green="0.27450980390000002" blue="0.34509803919999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <color key="tintColor" systemColor="labelColor"/>
-                        <color key="barTintColor" systemColor="linkColor"/>
+                        <color key="barTintColor" systemColor="tintColor"/>
                         <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </textAttributes>
                     </navigationBar>
@@ -103,7 +109,6 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Todoey" id="3Py-aD-fwl">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="GJ0-VS-g3O">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="wsX-d3-VdV" id="1h7-T6-aD9"/>
                             </connections>
@@ -128,6 +133,9 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="tintColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -11,5 +11,6 @@ import RealmSwift
 
 class Category: Object {
     @objc dynamic var name: String = ""
+    @objc dynamic var cellColor: String = ""
     var items = List<Item>() // Forward relationship that means each category will have list of items. This is one too many relationship meaning one category will contain many items.
 }

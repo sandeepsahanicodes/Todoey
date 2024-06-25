@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import SwipeCellKit
+import ChameleonFramework
 
 class CategoryViewController: SwipeTableViewController {
     
@@ -19,6 +20,13 @@ class CategoryViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategories()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation bar does not exist!")}
+        
+        navBar.backgroundColor = UIColor(hexString: "1D9BF6")
+
     }
     
     // Adds an element when button is tapped.
@@ -37,6 +45,7 @@ class CategoryViewController: SwipeTableViewController {
             
             let newCategory = Category()
             newCategory.name = textField.text!
+            newCategory.cellColor = UIColor.randomFlat().hexValue()
             
             self.save(category: newCategory)
         }
@@ -95,7 +104,14 @@ extension CategoryViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
-        cell.textLabel?.text = categoriesArray?[indexPath.row].name ?? "No category Added Yet"
+        
+        if let category = categoriesArray?[indexPath.row] {
+            cell.textLabel?.text = category.name
+            cell.backgroundColor = UIColor(hexString: category.cellColor)
+            guard let categoryColor = UIColor(hexString: category.cellColor) else {fatalError("")}
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+        }
+        
         return cell
     }
 
