@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 import SwipeCellKit
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     let realm = try! Realm()
 
@@ -18,7 +18,6 @@ class CategoryViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.rowHeight = 85.0
         loadCategories()
     }
     
@@ -72,6 +71,20 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    // MARK: Delete categories with swipe
+    override func updateModel(at indexPath: IndexPath) {
+                    if let categoryForDeletion = self.categoriesArray?[indexPath.row] {
+        
+                        do {
+                            try self.realm.write({
+                                self.realm.delete(categoryForDeletion)
+                            })
+                        } catch {
+                            print("Error while deleting category, \(error.localizedDescription)")
+                        }
+                    }
+    }
+    
 }
 
 // MARK: TableView Datasource and Delegate Methods
@@ -81,11 +94,8 @@ extension CategoryViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath) as! SwipeTableViewCell
-        let category = categoriesArray?[indexPath.row]
-        cell.textLabel?.text = category?.name ?? "No Categories Added Yet"
-        
-        cell.delegate = self
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        cell.textLabel?.text = categoriesArray?[indexPath.row].name ?? "No category Added Yet"
         return cell
     }
 
@@ -100,38 +110,6 @@ extension CategoryViewController {
         if let indexPath = tableView.indexPathForSelectedRow {
             destinationVC.selectedCategory = categoriesArray?[indexPath.row]
         }
-
-    }
-}
-
-extension CategoryViewController: SwipeTableViewCellDelegate {
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
-
-        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            if let categoryForDeletion = self.categoriesArray?[indexPath.row] {
-                
-                do {
-                    try self.realm.write({
-                        self.realm.delete(categoryForDeletion)
-                    })
-                } catch {
-                    print("Error while deleting category, \(error.localizedDescription)")
-                }
-            }
-        }
-
-        // customize the action appearance
-        deleteAction.image = UIImage(named: "deleteIcon")
-
-        return [deleteAction]
-    }
-    
-    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
-        var options = SwipeOptions()
-        options.expansionStyle = .destructive
-        options.transitionStyle = .border
-        return options
     }
 }
 

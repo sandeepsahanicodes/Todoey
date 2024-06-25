@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
 
     var todoItems: Results<Item>?
     let realm = try! Realm()
@@ -79,6 +79,20 @@ class TodoListViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    override func updateModel(at indexPath: IndexPath) {
+        if let todoItem = todoItems?[indexPath.row] {
+            do {
+                try realm.write {
+                    realm.delete(todoItem)
+                }
+                
+            } catch {
+                print("Error while delete todo items, \(error.localizedDescription)")
+            }
+            
+        }
+    }
+    
 }
 
 // MARK: Table view datasource methods.
@@ -89,7 +103,8 @@ extension TodoListViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "todoItemCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
@@ -114,7 +129,7 @@ extension TodoListViewController {
                     item.isDone = !item.isDone
                 })
             } catch {
-                print("Error while updating doe status, \(error.localizedDescription)")
+                print("Error while updating task status, \(error.localizedDescription)")
             }
         }
 
