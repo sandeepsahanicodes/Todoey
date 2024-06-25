@@ -48,6 +48,7 @@ class TodoListViewController: UITableViewController {
                     try self.realm.write {
                         let newItem = Item()
                         newItem.title = unwrappedTitle
+                        newItem.dateCreated = Date()
                         currentCategory.items.append(newItem)
                     }
                 } catch {
@@ -74,7 +75,7 @@ class TodoListViewController: UITableViewController {
     
     // MARK: loads item into tasks array with request.
     func loadItems() {
-        todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        todoItems = selectedCategory?.items.sorted(byKeyPath: "dateCreated", ascending: true)
         tableView.reloadData()
     }
     
@@ -126,27 +127,26 @@ extension TodoListViewController {
 
 // MARK: Extension for UISearchBar.
 
-//extension TodoListViewController: UISearchBarDelegate {
-//    // Quering searched element in search bar.
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        let request: NSFetchRequest<Item> = Item.fetchRequest()
-//        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@ ", searchBar.text!)
-//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//
-//        loadItems(with: request )
-//    }
-//
-//    // Getting original list back after searching element.
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//
-//         // Compilation time problem!
-//        if searchBar.text?.count == 0 {
-//            loadItems()
-//            DispatchQueue.main.async {
-//                searchBar.resignFirstResponder()
-//            }
-//        }
-//    }
-//
-//}
+extension TodoListViewController: UISearchBarDelegate {
+    // Querying searched element in search bar.
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let searchText = searchBar.text {
+            todoItems = todoItems?.filter("title CONTAINS [cd] %@", searchText).sorted(byKeyPath: "dateCreated", ascending: true)
+        }
+        tableView.reloadData()
+    }
+
+    // Getting original list back after searching element.
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+
+         // Compilation time problem!
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+
+}
 
