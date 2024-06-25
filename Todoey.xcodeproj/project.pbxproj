@@ -118,13 +118,13 @@
 		EB2BE4F8239524DB00FB933B /* Todoey */ = {
 			isa = PBXGroup;
 			children = (
+				EB2BE4F9239524DB00FB933B /* AppDelegate.swift */,
 				5A45D5E629A22DE300FF8289 /* Data Models */,
 				5A45D5E729A22DEF00FF8289 /* View */,
 				5A45D5E829A22DFA00FF8289 /* Controller */,
 				5A75487A29A3484900D62392 /* Supporting Files */,
 				EB2BE507239524DC00FB933B /* Info.plist */,
 				EB2BE4FF239524DB00FB933B /* Main.storyboard */,
-				EB2BE4F9239524DB00FB933B /* AppDelegate.swift */,
 				EB2BE502239524DC00FB933B /* Assets.xcassets */,
 			);
 			path = Todoey;
