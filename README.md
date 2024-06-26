@@ -12,14 +12,7 @@
 Todo list app from Angela Yu's iOS development bootcamp.
 
 # Screenshots
-
-<div style="float:left;margin:0 20px 20px 0" markdown="1">
-
-<img width="200" alt="Welcome View Controller" src="https://user-images.githubusercontent.com/82876741/217284371-aef080cc-be5b-47a9-907a-b0a7336b7f6c.png">
-
-
-</div>
-
+- 
 # Technologies Used:
 ### Foundation
 - Swift5
@@ -33,5 +26,5 @@ Todo list app from Angela Yu's iOS development bootcamp.
   
 
 # Links
-- App in action [Click to watch the video](https://www.youtube.com/sandeepsahanicodes)
+- App in action [Click to watch the video](https://www.youtube.com/@sandeepsahanicodes)
 
