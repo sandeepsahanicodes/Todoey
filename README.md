@@ -12,7 +12,15 @@
 Todo list app from Angela Yu's iOS development bootcamp.
 
 # Screenshots
-- 
+<div style="float:left;margin:0 20px 20px 0" markdown="1">
+
+<img width="200" alt="Category View Controller" src="https://github.com/sandeepsahanicodes/Todoey/assets/82876741/6b2e42ba-e4c8-4567-8743-59155e60f6d3">
+<img width="200" alt="Personal View Controller" src="https://github.com/sandeepsahanicodes/Todoey/assets/82876741/2c8b42e4-e088-4dd8-a716-3ef1926cfdd8">
+<img width="200" alt="Work View Controller" src="https://github.com/sandeepsahanicodes/Todoey/assets/82876741/7547ecbd-8473-41f1-af40-04606b061cfe">
+<img width="200" alt="Home View Controller" src="https://github.com/sandeepsahanicodes/Todoey/assets/82876741/d35e6ab7-d597-4f9b-abd8-d5d5bca09f84">
+
+</div>
+
 # Technologies Used:
 ### Foundation
 - Swift5
@@ -26,5 +34,5 @@ Todo list app from Angela Yu's iOS development bootcamp.
   
 
 # Links
-- App in action [Click to watch the video](https://www.youtube.com/@sandeepsahanicodes)
+- App in action [Click to watch the video](https://www.youtube.com/watch?v=hVVPVC6OThg)
 
